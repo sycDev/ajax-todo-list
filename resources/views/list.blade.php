@@ -14,7 +14,7 @@
                 <div class="col-lg-6 mx-auto mt-3">
                     <div class="card">
                         <div class="card-header">
-                            <h4 class="card-title">To Do <a href="#" class="pull-right" data-toggle="modal" data-target="#myModal"><i class="fa fa-plus" aria-hidden="true"></i></a></h4>
+                            <h4 class="card-title">To Do <a href="#" class="pull-right" id="addNew" data-toggle="modal" data-target="#myModal"><i class="fa fa-plus" aria-hidden="true"></i></a></h4>
                         </div>
                         <div class="card-body">
                             <ul class="list-group">
@@ -50,7 +50,7 @@
                 </div>
             </div>
     </div>
-
+    {{ csrf_field() }}
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <script>
@@ -59,10 +59,25 @@
           $(this).click(function(event) {
             var text = $(this).text();
             $('#title').text('Edit Item');
+            $('#addItem').val(text);
             $('#delete').show();
             $('#saveChanges').show();
             $('#AddButton').hide();
-            $('#addItem').val(text);
+          });
+        });
+
+        $('#addNew').click(function(event) {
+          $('#title').text('Add New Item');
+          $('#addItem').val("");
+          $('#delete').hide();
+          $('#saveChanges').hide();
+          $('#AddButton').show();
+        });
+
+        $('#AddButton').click(function(event) {
+          var text = $('#addItem').val();
+          $.post('list', {'text': text ,'_token': $('input[name=_token]').val()}, function(data) {
+            console.log(data);
           });
         });
       });
