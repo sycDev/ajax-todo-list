@@ -17,12 +17,10 @@
                             <h4 class="card-title">To Do <a href="#" class="pull-right" id="addNew" data-toggle="modal" data-target="#myModal"><i class="fa fa-plus" aria-hidden="true"></i></a></h4>
                         </div>
                         <div class="card-body">
-                            <ul class="list-group">
-                                <li class="list-group-item ourItem" data-toggle="modal" data-target="#myModal">Cras justo odio</li>
-                                <li class="list-group-item ourItem" data-toggle="modal" data-target="#myModal">Dapibus ac facilisis in</li>
-                                <li class="list-group-item ourItem" data-toggle="modal" data-target="#myModal">Morbi leo risus</li>
-                                <li class="list-group-item ourItem" data-toggle="modal" data-target="#myModal">Porta ac consectetur ac</li>
-                                <li class="list-group-item ourItem" data-toggle="modal" data-target="#myModal">Vestibulum at eros</li>
+                            <ul class="list-group" id="items">
+                                @foreach ($items as $item)
+                                  <li class="list-group-item ourItem" data-toggle="modal" data-target="#myModal" data-id="{{ $item->id }}">{{ $item->item }}</li>
+                                @endforeach
                             </ul>
                         </div>
                     </div>
@@ -39,11 +37,12 @@
                         </div>
                         <div class="modal-body">
                           <input type="text" class="form-control" name="addItem" id="addItem" placeholder="Write Item Here">
+                          <input type="hidden" id="id">
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-warning" id="delete" data-dismiss="modal" style="display: none;">Delete</button>
                           <button type="button" class="btn btn-primary" id="saveChanges" style="display: none;">Save changes</button>
-                          <button type="button" class="btn btn-primary" id="AddButton">Add Item</button>
+                          <button type="button" class="btn btn-primary" id="AddButton" data-dismiss="modal">Add Item</button>
                         </div>
                       </div>
                     </div>
@@ -55,15 +54,16 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <script>
       $(document).ready(function() {
-        $('.ourItem').each(function() {
-          $(this).click(function(event) {
-            var text = $(this).text();
-            $('#title').text('Edit Item');
-            $('#addItem').val(text);
-            $('#delete').show();
-            $('#saveChanges').show();
-            $('#AddButton').hide();
-          });
+        $(document).on('click', '.ourItem', function(event) {
+          event.preventDefault();
+          var text = $(this).text();
+          var id = $(this).attr("data-id");
+          $('#title').text('Edit Item');
+          $('#addItem').val(text);
+          $('#delete').show();
+          $('#saveChanges').show();
+          $('#AddButton').hide();
+          $('#id').val(id);
         });
 
         $('#addNew').click(function(event) {
@@ -77,7 +77,14 @@
         $('#AddButton').click(function(event) {
           var text = $('#addItem').val();
           $.post('list', {'text': text ,'_token': $('input[name=_token]').val()}, function(data) {
-            console.log(data);
+            $('#items').load(location.href + ' #items');
+          });
+        });
+
+        $('#delete').click(function(event) {
+          var id = $('#id').val();
+          $.post('delete', {'id': id ,'_token': $('input[name=_token]').val()}, function(data) {
+            $('#items').load(location.href + ' #items');
           });
         });
       });

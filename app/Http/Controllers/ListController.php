@@ -9,14 +9,21 @@ class ListController extends Controller
 {
     public function index()
     {
-        return view('list');
+        $items = Item::all();
+        return view('list', compact('items'));
     }
     
-    public function create(request $request)
+    public function create(Request $request)
     {
         $item = new Item;
         $item->item = $request->text;
         $item->save();
         return 'Done';
+    }
+
+    public function delete(Request $request)
+    {
+        Item::where('id', $request->id)->delete();
+        return $request->all();
     }
 }
