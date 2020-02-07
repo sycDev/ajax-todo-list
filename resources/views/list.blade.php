@@ -41,7 +41,7 @@
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-warning" id="delete" data-dismiss="modal" style="display: none;">Delete</button>
-                          <button type="button" class="btn btn-primary" id="saveChanges" style="display: none;">Save changes</button>
+                          <button type="button" class="btn btn-primary" id="saveChanges" data-dismiss="modal" style="display: none;">Save changes</button>
                           <button type="button" class="btn btn-primary" id="AddButton" data-dismiss="modal">Add Item</button>
                         </div>
                       </div>
@@ -76,14 +76,26 @@
 
         $('#AddButton').click(function(event) {
           var text = $('#addItem').val();
-          $.post('list', {'text': text ,'_token': $('input[name=_token]').val()}, function(data) {
-            $('#items').load(location.href + ' #items');
-          });
+          if(text == ""){
+            alert('Please fill in the item.');
+          }else{
+            $.post('list', {'text': text ,'_token': $('input[name=_token]').val()}, function(data) {
+              $('#items').load(location.href + ' #items');
+            });
+          }
         });
 
         $('#delete').click(function(event) {
           var id = $('#id').val();
           $.post('delete', {'id': id ,'_token': $('input[name=_token]').val()}, function(data) {
+            $('#items').load(location.href + ' #items');
+          });
+        });
+
+        $('#saveChanges').click(function(event) {
+          var id = $('#id').val();
+          var value = $('#addItem').val();
+          $.post('update', {'id': id , 'value': value, '_token': $('input[name=_token]').val()}, function(data) {
             $('#items').load(location.href + ' #items');
           });
         });
