@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" integrity="sha256-rByPlHULObEjJ6XQxW/flG2r+22R5dKiAoef+aXWfik=" crossorigin="anonymous" />
     <title>Ajax To-Do List</title>
 </head>
 <body>
@@ -24,6 +25,10 @@
                             </ul>
                         </div>
                     </div>
+                </div>
+
+                <div class="col-lg-2 mx-auto mt-3">
+                  <input type="text" class="form-control" name="searchItem" id="searchItem" placeholder="Search">
                 </div>
 
                 <div class="modal" id="myModal" tabindex="-1" role="dialog">
@@ -52,6 +57,7 @@
     {{ csrf_field() }}
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
     <script>
       $(document).ready(function() {
         $(document).on('click', '.ourItem', function(event) {
@@ -97,6 +103,12 @@
           var value = $('#addItem').val();
           $.post('update', {'id': id , 'value': value, '_token': $('input[name=_token]').val()}, function(data) {
             $('#items').load(location.href + ' #items');
+          });
+        });
+
+        $(function(){
+          $("#searchItem").autocomplete({
+            source: 'http://localhost:8000/search'
           });
         });
       });
